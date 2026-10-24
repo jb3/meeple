@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Meeple sounds</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg" />
+<style>
+  :root { color-scheme: dark; --bg: #16181d; --fg: #e8e6e1; --dim: #8b8f98; --btn: #272b33; --on: #3d6b4f; }
+  body { margin: 0; padding: 16px; background: var(--bg); color: var(--fg); font: 15px/1.4 system-ui, sans-serif; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--dim); margin: 24px 0 8px; }
+  p { color: var(--dim); margin: 4px 0; }
+  .grid { display: flex; flex-wrap: wrap; gap: 6px; }
+  button { background: var(--btn); color: var(--fg); border: 1px solid #3a3f49; border-radius: 6px; padding: 7px 12px; font: inherit; cursor: pointer; }
+  button:hover { border-color: #6a7283; }
+  button:active { transform: translateY(1px); }
+  button.on { background: var(--on); border-color: #5c9a75; }
+  label { display: inline-flex; align-items: center; gap: 8px; margin-right: 16px; color: var(--dim); }
+  input[type=range] { width: 140px; }
+  .bar { position: sticky; top: 0; background: var(--bg); padding: 8px 0; border-bottom: 1px solid #2a2e36; }
+</style>
+</head>
+<body>
+<h1>Meeple sounds</h1>
+<p>Every sound the audio engine can make, played through the real engine. Click anywhere first to start audio.</p>
+
+<div class="bar">
+  <label>Volume <input type="range" id="vol" min="0" max="1.5" step="0.05" value="1" /> <span id="volv">1.0</span></label>
+  <label>Pan <input type="range" id="pan" min="-1" max="1" step="0.1" value="0" /> <span id="panv">0</span></label>
+  <label>Pitch <input type="range" id="pitch" min="0.5" max="2" step="0.05" value="1" /> <span id="pitchv">1.0</span></label>
+  <label>Trade <select id="role"></select></label>
+  <button id="stop">Stop all loops</button>
+</div>
+
+<h2>One-shot sounds</h2>
+<div class="grid" id="shots"></div>
+
+<h2>Ambience (toggle; stays on until switched off)</h2>
+<div class="grid" id="amb"></div>
+
+<h2>Events with their own music</h2>
+<div class="grid" id="cues"></div>
+
+<script src="audio/core.js"></script>
+<script src="audio/voices.js"></script>
+<script src="audio/ambience.js"></script>
+<script src="audio/music.js"></script>
+<script src="audio/melody.js"></script>
+<script src="audio/folk.js"></script>
+<script src="audio/events.js"></script>
+<script src="audio/update.js"></script>
+<script>
+(() => {
+  const A = window.meepleAudio, P = A.P;
+  const params = new Float32Array(32);
+  const reset = () => {
+    params.fill(0);
+    params[P.HOUR] = 12;
+    params[P.ZOOM] = 10;
+    params[P.PLACE] = 0.5;
+    params[P.SEED] = 1;
+  };
+  reset();
+
+  const $ = (id) => document.getElementById(id);
+  for (const id of ["vol", "pan", "pitch"]) {
+    $(id).oninput = () => { $(id + "v").textContent = (+$(id).value).toFixed(id === "pan" ? 1 : 2).replace(/\.?0+$/, "") || "0"; };
+  }
+  const role = $("role");
+  role.add(new Option("none", 0));
+  for (let i = 1; i <= 12; i++) role.add(new Option("trade " + i, i));
+
+  // events are "name:volume:pan:pitch", with the trade in the hundreds of the pitch
+  function shoot(name) {
+    const pitch = +$("pitch").value + 100 * +role.value;
+    A.update(params, `${name}:${$("vol").value}:${$("pan").value}:${pitch}`);
+  }
+
+  for (const name of [...A.voices].sort()) {
+    const b = document.createElement("button");
+    b.textContent = name;
+    b.onclick = () => shoot(name);
+    $("shots").append(b);
+  }
+
+  const toggles = $("amb"), cues = $("cues");
+  const active = new Map();
+  function toggle(parent, label, set, group) {
+    const b = document.createElement("button");
+    b.textContent = label;
+    b.onclick = () => {
+      const on = !b.classList.contains("on");
+      if (group) for (const o of parent.children) if (o !== b) o.classList.remove("on");
+      b.classList.toggle("on", on);
+      if (group) for (const [, f] of [...active]) if (f.group === group) active.delete(f.key);
+      const key = label;
+      if (on) active.set(key, { key, group, set });
+      else active.delete(key);
+    };
+    parent.append(b);
+  }
+  const level = (idx, v = 1) => (p) => { p[idx] = v; };
+  const AMB = [
+    ["Rain", (p) => { p[P.RAIN] = 1; }],
+    ["Wind", level(P.WIND)],
+    ["Snow", (p) => { p[P.SNOW] = 1; p[P.WIND] = 0.3; }],
+    ["Storm (thunder)", (p) => { p[P.STORM] = 1; p[P.RAIN] = 1; p[P.WIND] = 0.8; }],
+    ["Crowd", (p) => { p[P.CROWD] = 1; }],
+    ["Water", level(P.WATER)],
+    ["Birdsong (day)", (p) => { p[P.NATURE] = 1; }],
+    ["Crickets (night)", (p) => { p[P.NATURE] = 1; p[P.NIGHT] = 1; p[P.HOUR] = 0; p[P.SEASON] = 1; }],
+    ["Dawn chorus", (p) => { p[P.NATURE] = 1; p[P.HOUR] = 6.6; }],
+    ["Train passing", (p) => { p[P.TRAIN] = 0.6 + 0.4 * Math.sin(performance.now() / 4000); p[P.TRAIN_SPEED] = 0.8; }],
+    ["Windmill", (p) => { p[P.MILL] = 1; p[P.SAIL] = performance.now() / 600; }],
+    ["Waterwheel", level(P.WHEEL)],
+    ["Tavern", level(P.TAVERN)],
+    ["Children at play", level(P.CHILDREN)],
+    ["Church nearby", level(P.CHURCH)],
+    ["Enclosed streets", level(P.ENCLOSED)],
+    ["Fog", level(P.FOG)],
+    ["Evening gathering (band)", level(P.FESTIVAL)],
+    ["Choir", level(P.CHOIR)],
+    ["Night", (p) => { p[P.NIGHT] = 1; p[P.HOUR] = 0; }],
+    ["Zoomed far out", (p) => { p[P.ZOOM] = 120; p[P.CROWD] = 0.5; }],
+    ["Desert", (p) => { p[P.BIOME] = 1; }],
+    ["Cold / high", (p) => { p[P.BIOME] = 2; }],
+    ["Forest", (p) => { p[P.BIOME] = 3; }],
+  ];
+  for (const [l, f] of AMB) toggle(toggles, l, f);
+  // any engine parameter added later that nothing above or in `skip` drives
+  // gets a plain 0-to-1 toggle of its own
+  const handled = new Set("RAIN WIND SNOW STORM CROWD WATER NATURE TRAIN TRAIN_SPEED NIGHT BIOME MILL SAIL WHEEL TAVERN CHILDREN CHURCH ENCLOSED FOG FESTIVAL CHOIR ZOOM CUE CUE_LEVEL".split(" "));
+  const skip = new Set(["HOUR", "SEASON", "PLACE", "MILL_PAN", "TIER", "SEED"]);
+  for (const name of Object.keys(P)) {
+    if (handled.has(name) || skip.has(name)) continue;
+    toggle(toggles, name.toLowerCase().replace(/_/g, " ") + " (auto)", (p) => { p[P[name]] = 1; });
+  }
+
+  const CUES = ["Fire", "Wedding", "Christening", "Closing time"];
+  CUES.forEach((l, i) => toggle(cues, l, (p) => { p[P.CUE] = i + 1; p[P.CUE_LEVEL] = 1; }, "cue"));
+
+  const music = document.createElement("button");
+  music.textContent = "Music";
+  music.className = "on";
+  music.onclick = () => {
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "b" }));
+    music.classList.toggle("on", A.state().music);
+  };
+  toggles.prepend(music);
+
+  $("stop").onclick = () => {
+    active.clear();
+    for (const b of document.querySelectorAll("#amb button, #cues button")) if (b !== music) b.classList.remove("on");
+  };
+
+  // the engine schedules its ambience and music from update(), once a frame
+  (function frame() {
+    reset();
+    for (const f of active.values()) f.set(params);
+    A.update(params, "");
+    requestAnimationFrame(frame);
+  })();
+})();
+</script>
+</body>
+</html>

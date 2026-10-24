@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "meeple",
+      "runtimeExecutable": "trunk",
+      "runtimeArgs": ["serve", "--release", "--port", "8080"],
+      "port": 8080
+    }
+  ]
+}

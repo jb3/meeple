@@ -1,0 +1,5 @@
+# Use 128-bit SIMD in the wasm build: every current browser has it. It lets
+# `wide` (see src/noise4.rs) and LLVM's auto-vectoriser use real vector
+# instructions instead of scalar code.
+[target.wasm32-unknown-unknown]
+rustflags = ["-C", "target-feature=+simd128"]

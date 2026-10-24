@@ -1,0 +1,243 @@
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #1b1d2a;
+  font-family: "Silkscreen", "Press Start 2P", ui-monospace, Menlo, monospace;
+  color: #fdf6e3;
+  -webkit-font-smoothing: none;
+}
+
+canvas#meeple {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  image-rendering: pixelated;
+  cursor: grab;
+  touch-action: none;
+}
+canvas#meeple:active { cursor: grabbing; }
+
+#hud {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  padding: 12px 16px;
+  background: rgba(30, 22, 18, 0.55);
+  border: 2px solid rgba(255, 230, 190, 0.35);
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.6;
+  letter-spacing: 0.5px;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.6);
+  transition: opacity 1.5s ease;
+  pointer-events: none;
+  opacity: 0;
+}
+#hud.visible { opacity: 1; }
+/* slips out of the way while a postcard moment holds */
+#hud.away { opacity: 0; }
+#hud-town { font-size: 17px; color: #ffd98a; }
+#hud-follow { color: #b8e0a8; }
+#hud-follow:empty, #hud-town:empty { display: none; }
+
+#help {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px 28px;
+  background: rgba(30, 22, 18, 0.88);
+  border: 2px solid rgba(255, 230, 190, 0.5);
+  border-radius: 4px;
+  font-size: 13px;
+  max-width: calc(100vw - 32px);
+  box-sizing: border-box;
+}
+#help.hidden { display: none; }
+#help h2 { margin: 0 0 12px; color: #ffd98a; font-size: 18px; }
+#help td { padding: 3px 14px 3px 0; vertical-align: top; }
+#help td:first-child { color: #ffd98a; white-space: nowrap; }
+#help .dim { opacity: 0.6; font-size: 11px; margin-bottom: 0; }
+
+#listen {
+  position: fixed;
+  top: 18px;
+  right: 20px;
+  font-size: 12px;
+  opacity: 0.7;
+  transition: opacity 2s ease;
+  pointer-events: none;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.6);
+}
+#listen.gone { opacity: 0; }
+
+/* the card for a villager you've clicked on */
+#card, #news, #chronicle {
+  position: fixed;
+  top: 18px;
+  left: 20px;
+  width: 300px;
+  max-width: calc(100vw - 72px);
+  padding: 14px 18px;
+  background: rgba(30, 22, 18, 0.82);
+  border: 2px solid rgba(255, 230, 190, 0.45);
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.7;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+#card.hidden, #news.hidden, #chronicle.hidden, #map.hidden { display: none; }
+#card-name { font-size: 17px; color: #ffd98a; margin-bottom: 4px; }
+#card .dim { opacity: 0.55; font-size: 10px; margin-top: 6px; }
+
+/* "Today in ...": a little printed newsletter */
+#news, #chronicle {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 380px;
+  background: #f3ead2;
+  color: #3a2c20;
+  border: 2px solid #b9a27a;
+  text-shadow: none;
+  box-shadow: 4px 6px 0 rgba(0, 0, 0, 0.35);
+}
+#news h2, #chronicle h2 { margin: 0; font-size: 19px; letter-spacing: 1px; text-align: center; }
+#news .date, #chronicle .date { text-align: center; font-size: 10px; border-top: 2px solid #3a2c20; border-bottom: 1px solid #3a2c20; margin: 6px 0 10px; padding: 2px 0; }
+#news ul, #chronicle ul { margin: 0; padding-left: 16px; }
+#news li, #chronicle li { margin-bottom: 4px; }
+#news .dim, #chronicle .dim { opacity: 0.6; font-size: 10px; text-align: center; margin-top: 10px; }
+
+/* where am I? */
+#map {
+  position: fixed;
+  top: 18px;
+  right: 20px;
+  padding: 6px;
+  background: rgba(30, 22, 18, 0.7);
+  border: 2px solid rgba(255, 230, 190, 0.45);
+  border-radius: 4px;
+  pointer-events: none;
+}
+#map-canvas { display: block; width: 240px; height: 240px; image-rendering: pixelated; }
+#map-label { font-size: 10px; text-align: center; margin-top: 4px; opacity: 0.8; }
+
+/* postcard moments: letterbox bars and a caption */
+#postcard {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 2.5s ease;
+  box-shadow: inset 0 9vh 0 0 rgba(10, 8, 6, 0.85), inset 0 -9vh 0 0 rgba(10, 8, 6, 0.85);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: calc(9vh + 18px);
+  box-sizing: border-box;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.7);
+}
+#postcard.on { opacity: 1; }
+#postcard-title { font-size: 26px; color: #ffe7b0; letter-spacing: 1px; text-align: center; padding: 0 16px; }
+#postcard-sub { font-size: 12px; opacity: 0.8; margin-top: 6px; }
+
+#toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 14px;
+  background: rgba(30, 22, 18, 0.85);
+  border: 2px solid rgba(255, 230, 190, 0.45);
+  border-radius: 4px;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+#toast.on { opacity: 1; }
+
+/* the quality badge: shown for a few seconds whenever the quality tier changes */
+#quality {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  padding: 6px 12px;
+  background: rgba(30, 22, 18, 0.85);
+  border: 2px solid rgba(255, 230, 190, 0.45);
+  border-radius: 4px;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+#quality.on { opacity: 1; }
+#quality.hidden { display: none; }
+/* clear of the touch menu when it's showing */
+#menu.visible ~ #quality { bottom: 80px; }
+
+/* the touch menu: hidden until the screen is pressed */
+#menu {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+#menu.visible { opacity: 1; pointer-events: auto; }
+#menu button {
+  font: inherit;
+  color: inherit;
+  background: rgba(30, 22, 18, 0.82);
+  border: 2px solid rgba(255, 230, 190, 0.45);
+  border-radius: 4px;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.6);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+#menu button:active { background: rgba(90, 66, 44, 0.9); }
+#menu-toggle { width: 48px; height: 48px; font-size: 22px; line-height: 1; padding: 0; }
+#menu-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+#menu-panel.hidden { display: none; }
+#menu-panel button { min-height: 40px; padding: 6px 14px; font-size: 12px; text-align: left; }
+#menu-panel .row { display: flex; gap: 6px; }
+#menu-panel .row button { flex: 1; }
+
+@media (max-width: 520px) {
+  #news { width: calc(100vw - 32px); }
+  #map-canvas { width: 160px; height: 160px; }
+  #postcard-title { font-size: 18px; }
+}
+
+/* offered instead of an automatic reload when that would drop fullscreen or sound */
+#update-banner {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 14px;
+  background: rgba(30, 22, 18, 0.9);
+  color: #ffd98a;
+  border: 2px solid rgba(255, 230, 190, 0.45);
+  border-radius: 4px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}

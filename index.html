@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Meeple</title>
+  <meta name="theme-color" content="#4aa8ee" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Meeple" />
+  <meta property="og:title" content="Meeple" />
+  <meta property="og:url" content="https://meeple.jb3.dev/" />
+  <meta property="og:image" content="https://meeple.jb3.dev/og.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Meeple" />
+  <meta name="twitter:image" content="https://meeple.jb3.dev/og.png" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <link data-trunk rel="copy-file" href="web/icon.svg" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link data-trunk rel="copy-file" href="web/apple-touch-icon.png" />
+  <link data-trunk rel="copy-file" href="web/og.png" />
+  <link data-trunk rel="copy-file" href="web/favicon.js" />
+  <script src="favicon.js" defer></script>
+  <link data-trunk rel="rust" data-wasm-opt="z" data-wasm-opt-params="--enable-simd --enable-bulk-memory --enable-nontrapping-float-to-int --enable-sign-ext --enable-mutable-globals" />
+  <link data-trunk rel="css" href="web/style.css" />
+  <link data-trunk rel="copy-dir" href="web/audio" />
+  <link data-trunk rel="copy-file" href="web/sounds.html" />
+  <link data-trunk rel="copy-file" href="web/menu.js" />
+  <script src="audio/core.js"></script>
+  <script src="audio/voices.js"></script>
+  <script src="audio/ambience.js"></script>
+  <script src="audio/music.js"></script>
+  <script src="audio/melody.js"></script>
+  <script src="audio/folk.js"></script>
+  <script src="audio/events.js"></script>
+  <script src="audio/update.js"></script>
+  <script src="menu.js" defer></script>
+  <link data-trunk rel="copy-file" href="web/update.js" />
+  <script src="update.js" defer></script>
+  <link data-trunk rel="copy-file" href="web/wakelock.js" />
+  <script src="wakelock.js" defer></script>
+</head>
+<body>
+  <canvas id="meeple"></canvas>
+
+  <div id="hud" class="visible">
+    <div id="hud-town"></div>
+    <div id="hud-time"></div>
+    <div id="hud-weather"></div>
+    <div id="hud-follow"></div>
+  </div>
+
+  <div id="help" class="hidden">
+    <h2>Meeple</h2>
+    <table>
+      <tr><td>Drag / WASD</td><td>Pan (pauses autopilot)</td></tr>
+      <tr><td>Wheel / + −</td><td>Zoom</td></tr>
+      <tr><td>Q / E</td><td>Rotate</td></tr>
+      <tr><td>Space</td><td>Toggle autopilot</td></tr>
+      <tr><td>P</td><td>Cycle pixel scale (crisp ↔ chunky)</td></tr>
+      <tr><td>T</td><td>Cycle time speed</td></tr>
+      <tr><td>R</td><td>Cycle weather</td></tr>
+      <tr><td>M</td><td>Mute / unmute</td></tr>
+      <tr><td>B</td><td>Music on / off</td></tr>
+      <tr><td>F</td><td>Fullscreen</td></tr>
+      <tr><td>N</td><td>New world</td></tr>
+      <tr><td>Click someone</td><td>Meet a villager and follow them</td></tr>
+      <tr><td>Click a train</td><td>Follow it for as long as it runs</td></tr>
+      <tr><td>J</td><td>Today's village newsletter</td></tr>
+      <tr><td>Z</td><td>Where am I? map</td></tr>
+      <tr><td>C</td><td>The valley's chronicle</td></tr>
+      <tr><td>O</td><td>Photograph mode (K light, Enter saves)</td></tr>
+      <tr><td>G / V</td><td>Next gallery world / world of the day</td></tr>
+      <tr><td>L</td><td>Copy a link to this exact spot</td></tr>
+      <tr><td>Y</td><td>Time-lapse</td></tr>
+      <tr><td>I</td><td>Turn looking inside houses (when zoomed in) on / off</td></tr>
+      <tr><td>H</td><td>Hide HUD</td></tr>
+      <tr><td>?</td><td>This help</td></tr>
+    </table>
+    <p class="dim">URL options: ?seed=1234&amp;pixel=2&amp;day=1200&amp;season=autumn&amp;hour=18&amp;x=0&amp;z=0</p>
+  </div>
+
+  <div id="card" class="hidden"><div id="card-name"></div><div id="card-body"></div><div class="dim">click elsewhere or Esc to let them go</div></div>
+  <div id="news" class="hidden"></div>
+  <div id="chronicle" class="hidden"></div>
+  <div id="map" class="hidden"><canvas id="map-canvas" width="160" height="160"></canvas><div id="map-label"></div></div>
+  <div id="postcard"><div id="postcard-title"></div><div id="postcard-sub"></div></div>
+  <div id="toast"></div>
+  <!-- touch screens have no keyboard: the menu presses the keys instead -->
+  <div id="menu">
+    <div id="menu-panel" class="hidden">
+      <button data-key=" " data-label="Autopilot" data-from="auto">Autopilot</button>
+      <div class="row"><button data-key="q">Turn left</button><button data-key="e">Turn right</button></div>
+      <div class="row"><button data-key="+">Zoom +</button><button data-key="-">Zoom −</button></div>
+      <button data-key="t" data-label="Time speed" data-from="speed">Time speed</button>
+      <button data-key="r" data-label="Weather" data-from="weather">Weather</button>
+      <button data-key="p" data-label="Pixel scale" data-from="pixel">Pixel scale</button>
+      <div class="row"><button data-key="m" data-label="Sound" data-from="sound">Mute</button><button data-key="b" data-label="Music" data-from="music">Music</button></div>
+      <button data-key="j" data-label="Newsletter" data-from="news">Newsletter</button>
+      <button data-key="z" data-label="Map" data-from="map">Map</button>
+      <button data-key="c" data-label="Chronicle" data-from="chronicle">Chronicle</button>
+      <button data-key="i" data-label="Look inside" data-from="peek">Look inside</button>
+      <button data-key="o" data-label="Photo mode" data-from="photo">Photo mode</button>
+      <button data-key="g">Gallery world</button>
+      <button data-key="l">Copy link</button>
+      <button data-key="f" id="menu-fullscreen" data-label="Fullscreen" data-from="fullscreen">Fullscreen</button>
+      <button data-key="h" data-label="HUD" data-from="hud">Hide HUD</button>
+      <button data-key="n">New world</button>
+      <button data-key="?">Help</button>
+    </div>
+    <button id="menu-toggle" aria-label="Menu" aria-expanded="false">☰</button>
+  </div>
+  <div id="quality" class="hidden"></div>
+  <div id="listen">click anywhere for sound · ? for help</div>
+</body>
+</html>
