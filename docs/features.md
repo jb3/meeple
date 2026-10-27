@@ -105,6 +105,13 @@ spring and autumn, salmon leaping weirs in autumn, birds crossing the sky and
 great migrating skeins, gulls following fishing boats, sailing and fishing boats,
 narrowboats on the canals.
 
+**Ecology.** Rabbits, deer and ducks boom and bust on a 9-day cycle that differs
+from region to region, with foxes and wolves following the prey a little behind,
+so lean years for prey are followed by lean years for predators. Foxes chase
+and catch rabbits and wolves hunt deer, thinning the herd for a while. Salmon
+runs are strong or poor from year to year. The village newsletter reports how
+plentiful rabbits, foxes, deer and salmon are.
+
 ## Machines and moving parts
 
 Steam trains with locomotives, coaches, freight and log wagons; semaphore signals

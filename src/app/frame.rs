@@ -175,6 +175,7 @@ impl App {
                         lines.insert(lines.len() - 1, "Trains stop at the station out by the line.".into());
                     }
                 }
+                lines.push(self.fauna.wildlife_report(Vec2::new(t.town.cx as f32, t.town.cz as f32)));
                 lines.push(format!("Weather: {}.", self.weather.label().to_lowercase()));
                 (t.town.name.to_string(), lines)
             });
@@ -208,6 +209,7 @@ impl App {
         if let Some(p) = &mut self.prof {
             p.mark("traffic+misc", now());
         }
+        self.fauna.set_day(self.clock.days);
         self.fauna.update(&self.world, dt, here, view_r, light.night, hour, smoothstep(2.85, 3.1, season) * (1.0 - smoothstep(3.75, 3.98, season)) * 0.85, season, &threats, &on_screen, warmup, &mut sounds);
         let era = skies::era(self.seed, gen.first_day.get(), self.clock.day());
         self.traffic.era = era;

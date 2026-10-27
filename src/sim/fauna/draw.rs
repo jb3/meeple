@@ -202,7 +202,7 @@ impl Fauna {
     pub fn draw(&self, b: &mut Boxes, fx: &mut Boxes, view: Vec2, view_r: f32, time: f32, tide: f32) {
         for g in self.groups.values().filter(|g| !g.hidden && g.active > 0.02) {
             let alpha = g.active;
-            for a in &g.members {
+            for a in g.members.iter().take(g.shown()) {
                 if a.pos.distance(view) > view_r {
                     continue;
                 }

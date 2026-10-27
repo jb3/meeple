@@ -67,11 +67,15 @@ impl Fauna {
                 perches,
                 perch_low,
                 on_perch: 0,
+                density: 1.0,
+                loss: 0.0,
+                fed: 0.0,
             };
             if let Some((kind, home, n, roam)) = g {
                 group.kind = kind;
                 group.roam = roam;
                 group.home = home;
+                group.density = ecology::abundance(gen.seed, kind, home, self.days);
                 if kind.on_water() && group.moor.is_none() && kind != Kind::Salmon {
                     // find open water inside this chunk (a heron wants the shallows by the bank)
                     let mut found = None;

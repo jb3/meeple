@@ -228,6 +228,28 @@ ambient sounds), `figures.rs` (shared figure drawing: garb, poses, props),
   turning round where the canal ends, in random colours.
 - **Owls** (`perch.rs`): sit on a treetop (lower down the bare trunk as leaves
   fall) and swoop to another now and then.
+- **Ecology** (`ecology.rs`): wildlife numbers rise and fall.
+  - `abundance(seed, kind, pos, days)` (0.1..1) is a pure function of the seed,
+    place and date, so a world looks the same whenever it is loaded. Each
+    320-unit region has its own phase. **Rabbits, deer and ducks** follow a
+    9-day boom and bust and are 30% leaner in winter; **foxes and wolves** follow
+    the same wave `PREDATOR_LAG` (1.4 rad, a bit over a quarter cycle) behind,
+    so a lean year for prey is followed by one for predators. **Salmon** run
+    strongly or poorly year by year (12-day years). Other kinds are always at
+    full strength.
+  - A group's `density` eases toward it (`approach(0.2, dt)`) and its `loss`
+    (animals killed lately) heals at 0.03 a second; `Group::shown()` is how many
+    of its animals are out, and the drawing, `sights()` and the hunt use only
+    those. A scarce predator can vanish for a spell.
+  - **The hunt** (`tick_ecology`): a hungry fox sees rabbits within 14 units and
+    a wolf sees deer within 22. It chases the nearest at a sprint, and rabbits
+    near a fox bolt. Closing within 0.9 units is a kill: the quarry's group
+    takes a `loss` of 1 and the hunter is `fed` for 30 seconds. Hunters work only
+    at their hours (`active > 0.5`) and only on animals that are in view range
+    and not hidden.
+  - `Fauna::wildlife_report(pos)` is the newsletter's "Wildlife:" line (rabbits,
+    foxes and deer as scarce, fair or plentiful, plus the salmon run in
+    autumn). The app calls `set_day(clock.days)` each frame.
 - `sights(view, reach)` reports things worth looking at for the director.
 - Shy animals bolt from villagers, carts and trains (`threats`).
 

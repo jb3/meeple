@@ -14,6 +14,7 @@ use crate::world::gen::{Ctx, Gen, SEA};
 use crate::world::World;
 
 mod boats;
+mod ecology;
 mod draw;
 mod flocks;
 mod herds;
@@ -86,6 +87,19 @@ struct Group {
     perch_low: Vec<f32>,
     /// The perch the owl is on.
     on_perch: usize,
+    /// How much of the group is about (0..1), following the population cycle.
+    density: f32,
+    /// Animals taken by predators lately; heals slowly.
+    loss: f32,
+    /// Seconds before a predator is hungry again.
+    fed: f32,
+}
+
+impl Group {
+    /// How many of its animals are out and about.
+    fn shown(&self) -> usize {
+        ((self.members.len() as f32 * self.density - self.loss).round().max(0.0) as usize).min(self.members.len())
+    }
 }
 
 /// A narrowboat working along a canal.
@@ -132,9 +146,16 @@ pub struct Fauna {
     narrowboats: Vec<Narrowboat>,
     boat_t: f32,
     rng: Rng,
+    seed: u32,
+    /// Absolute in-game days, for the population cycles.
+    days: f64,
 }
 
 impl Fauna {
+    pub fn set_day(&mut self, days: f64) {
+        self.days = days;
+    }
+
     /// Narrowboats about: (the canal they're on, where they are).
     pub fn narrowboats(&self) -> Vec<(i32, Vec2)> {
         self.narrowboats.iter().map(|b| (b.canal, Vec2::new(b.x, b.canal as f32 + 0.5))).collect()
@@ -156,7 +177,7 @@ impl Fauna {
             if g.hidden || g.active < 0.35 {
                 continue;
             }
-            let Some(c) = mean(&mut g.members.iter().map(|a| a.pos)) else { continue };
+            let Some(c) = mean(&mut g.members.iter().take(g.shown()).map(|a| a.pos)) else { continue };
             let what = match g.kind {
                 Kind::Sheep => "Sheep grazing",
                 Kind::Cow => "Cattle grazing",
@@ -189,7 +210,7 @@ impl Fauna {
     }
 
     pub fn new(seed: u32) -> Self {
-        Fauna { groups: HashMap::new(), flocks: Vec::new(), flock_t: 5.0, herds: Vec::new(), herd_t: 20.0, night: 0.0, narrowboats: Vec::new(), boat_t: 3.0, rng: Rng::new(seed as u64 ^ 0xfa11a) }
+        Fauna { groups: HashMap::new(), flocks: Vec::new(), flock_t: 5.0, herds: Vec::new(), herd_t: 20.0, night: 0.0, narrowboats: Vec::new(), boat_t: 3.0, rng: Rng::new(seed as u64 ^ 0xfa11a), seed, days: 0.0 }
     }
 
     fn is_water(gen: &Gen, ctx: &Ctx, p: Vec2) -> bool {
@@ -376,6 +397,7 @@ impl Fauna {
                 }
             }
         }
+        self.tick_ecology(dt);
         // migrating deer: a herd crosses the country in spring and autumn
         self.update_herds(world, dt, view, view_r, night, season, on_screen, warmup);
 
