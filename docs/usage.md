@@ -50,9 +50,9 @@ touch.
 
 `X` starts recording the canvas, and the soundscape once audio has started
 (it is silent if you haven't clicked yet), at up to 60 fps and 12 Mbit/s with
-`MediaRecorder`. Press `X` again and the browser downloads `meeple-<time>.mp4`
-(`.webm` where MP4 isn't supported; Safari and recent Chrome write MP4, Firefox
-WebM). The touch menu has a "Record video" button that shows on or off. Photo mode
+`MediaRecorder`. Press `X` again and the browser downloads `meeple-<time>.webm`
+(Chrome and Firefox write WebM, Safari MP4; MP4 is the last choice because
+Chrome's H.264 encoder fails on some canvas sizes). The touch menu has a "Record video" button that shows on or off. Photo mode
 and the HUD toggle keep working while recording, so you can hide the HUD first
 (`H`). The video follows the canvas, so `pixel=` and quality tiers show up in it.
 

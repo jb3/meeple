@@ -22,14 +22,34 @@ window.meepleUi = {
     if (!c.captureStream || typeof MediaRecorder === "undefined") return false;
     const stream = c.captureStream(60);
     for (const t of window.meepleAudio?.captureStream?.()?.getAudioTracks() ?? []) stream.addTrack(t);
-    const types = ["video/mp4;codecs=avc1", "video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm"];
+    // WebM first: Chrome's H.264 encoder fails on odd canvas sizes and on some
+    // hardware at high resolutions, so MP4 is left to browsers with nothing else
+    const types = ["video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm", "video/mp4;codecs=avc1"];
     const type = types.find((t) => MediaRecorder.isTypeSupported(t));
     if (!type) return false;
     const chunks = [];
     rec = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: 12_000_000 });
     rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
+    let failed = false;
+    rec.onerror = (e) => {
+      failed = true;
+      console.error("recording failed", e.error);
+      if (rec?.state !== "inactive") rec?.stop();
+    };
     rec.onstop = () => {
       rec = null;
+      const size = chunks.reduce((n, c) => n + c.size, 0);
+      // a recording that died at once leaves a few bytes of header: don't hand that over
+      if (failed || size < 20000) {
+        const t = document.getElementById("toast");
+        if (t) {
+          t.textContent = "Recording failed in this browser";
+          t.classList.remove("hidden");
+          t.classList.add("on");
+          setTimeout(() => t.classList.remove("on"), 4000);
+        }
+        return;
+      }
       const a = document.createElement("a");
       a.download = `meeple-${Date.now()}.${type.startsWith("video/mp4") ? "mp4" : "webm"}`;
       a.href = URL.createObjectURL(new Blob(chunks, { type }));
