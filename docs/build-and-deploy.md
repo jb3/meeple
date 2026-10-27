@@ -51,7 +51,7 @@ the stylesheet, builds the Rust crate (`data-trunk rel="rust"`), and loads the s
 | File | Role |
 | --- | --- |
 | `web/audio/*.js` | The WebAudio engine (see [Audio](audio.md)); copied as the `audio/` directory |
-| `web/menu.js` | Defines `window.meepleUi.snap()` (saves the canvas as a PNG) and the touch menu |
+| `web/menu.js` | Defines `window.meepleUi` (`snap()` saves the canvas as a PNG, `record()`/`recording()` record video) and the touch menu |
 | `web/favicon.js` | Draws a favicon of a meeple dressed for the in-game season on a darker sky at night, hanging off the audio engine's per-frame hook (`meepleAudio.onFrame`) |
 | `web/splash.js` | The pixel-art splash screen (see [Splash screen](usage.md#splash-screen)) |
 | `web/wakelock.js` | Keeps the screen awake while the world is on show, re-acquiring the lock on return to the tab |
@@ -77,7 +77,7 @@ the code:
 | Location | What they cover |
 | --- | --- |
 | `world/chunk/tests.rs`, `bridge_tests.rs`, `tree_tests.rs` | Chunk generation invariants (towns, bridges, ferries, ski runs premade and clear, trees, rails), wide water crossed by a ferry |
-| `world/chunk/seed_hunt.rs` | `rank_seeds`, an `#[ignore]`d hunt for good starting seeds; the `GALLERY` in `app.rs` came from it |
+| `world/chunk/seed_hunt.rs` | `rank_seeds`, an `#[ignore]`d hunt for good starting seeds (the `GALLERY` in `app.rs` came from it), and `find_feature_spots`, which finds a place for each feature for [Seeds](seeds.md) |
 | `noise4.rs` | SIMD noise agrees with the scalar versions; two `#[ignore]`d benchmarks |
 | `sim/people/tests.rs` | Villagers: schedules, weddings, families, events staying on the streets, visits |
 | `sim/people/visit.rs` | Promised festivals and weddings wait for the camera and then happen |

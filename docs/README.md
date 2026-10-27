@@ -8,6 +8,7 @@ itself like a screensaver. These pages describe what it does and how it works.
 | [Overview](overview.md) | Architecture, the frame loop, determinism, source layout |
 | [Features](features.md) | A complete catalogue of everything the world contains |
 | [Usage](usage.md) | Controls, URL options, quality tiers, what the browser remembers |
+| [Seeds](seeds.md) | Links to a seed and spot that shows off each feature, and how they were found |
 | [World generation](world-generation.md) | The seed-derived planner: terrain, biomes, rivers, towns, roads, railways, canals, sites |
 | [Chunks and meshing](chunks-and-meshing.md) | Turning the plan into voxels, then into vertex data; streaming |
 | [Simulation](simulation.md) | Clock, weather, villagers, goings-on, fauna, trains and carts, stations, travellers, skies, wonders, particles |
