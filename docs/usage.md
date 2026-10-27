@@ -32,6 +32,7 @@ dev profile is slow to load.
 | `Z` | "Where am I?" map of the land around the camera |
 | `C` | The valley's chronicle: fires, fairs, weddings, eclipses, droughts, floods, harvests, new ages |
 | `O` | Photograph mode (time stops, tilt-shift blur): `K` changes the light, `Enter` saves a PNG |
+| `X` | Record a video with sound; press again to stop and save it |
 | `G` / `V` | Next gallery world / the world of the day (seeded by today's UTC date) |
 | `L` | Copy a link to this exact spot and moment |
 | `Y` | Time-lapse (a day in five seconds, `TIMELAPSE_SPEED = 240`) |
@@ -44,6 +45,16 @@ dev profile is slow to load.
 Touch screens get a ☰ menu (`web/menu.js`) whose buttons press the same keys and
 show what each option is currently set to; it appears for four seconds after a
 touch.
+
+### Recording video
+
+`X` starts recording the canvas, and the soundscape once audio has started
+(it is silent if you haven't clicked yet), at up to 60 fps and 12 Mbit/s with
+`MediaRecorder`. Press `X` again and the browser downloads `meeple-<time>.mp4`
+(`.webm` where MP4 isn't supported; Safari and recent Chrome write MP4, Firefox
+WebM). The touch menu has a "Record video" button that shows on or off. Photo mode
+and the HUD toggle keep working while recording, so you can hide the HUD first
+(`H`). The video follows the canvas, so `pixel=` and quality tiers show up in it.
 
 ## URL options
 

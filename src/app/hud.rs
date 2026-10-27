@@ -375,6 +375,7 @@ impl App {
             let _ = m.set_attribute("data-map", on(self.map_on));
             let _ = m.set_attribute("data-chronicle", on(self.chron_on));
             let _ = m.set_attribute("data-photo", on(self.photo));
+            let _ = m.set_attribute("data-record", on(is_recording().unwrap_or(false)));
         }
         let auto = if !self.dir.auto { " · autopilot off" } else { "" };
         self.set_text("hud-town", &place);

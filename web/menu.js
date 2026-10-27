@@ -10,7 +10,38 @@ window.meepleUi = {
     a.href = c.toDataURL("image/png");
     a.click();
   },
+
+  // Start or stop recording the canvas (and the soundscape, once audio has
+  // started) to a video file. Returns whether a recording is now running.
+  record() {
+    if (rec) {
+      rec.stop();
+      return false;
+    }
+    const c = document.getElementById("meeple");
+    if (!c.captureStream || typeof MediaRecorder === "undefined") return false;
+    const stream = c.captureStream(60);
+    for (const t of window.meepleAudio?.captureStream?.()?.getAudioTracks() ?? []) stream.addTrack(t);
+    const types = ["video/mp4;codecs=avc1", "video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm"];
+    const type = types.find((t) => MediaRecorder.isTypeSupported(t));
+    if (!type) return false;
+    const chunks = [];
+    rec = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: 12_000_000 });
+    rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
+    rec.onstop = () => {
+      rec = null;
+      const a = document.createElement("a");
+      a.download = `meeple-${Date.now()}.${type.startsWith("video/mp4") ? "mp4" : "webm"}`;
+      a.href = URL.createObjectURL(new Blob(chunks, { type }));
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+    };
+    rec.start(1000);
+    return true;
+  },
+  recording: () => !!rec,
 };
+let rec = null;
 
 (() => {
   const menu = document.getElementById("menu");
@@ -63,6 +94,7 @@ window.meepleUi = {
       map: d.map,
       chronicle: d.chronicle,
       photo: d.photo,
+      record: d.record,
       hud: d.hud,
       fullscreen: onOff(!!document.fullscreenElement),
     };

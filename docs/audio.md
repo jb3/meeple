@@ -55,14 +55,16 @@ are deliberately unique. They replace what used to be a single 2000-line IIFE.
 
 | File | Contents |
 | --- | --- |
-| `core.js` | `P`, shared state (`ctx`, buses, `loops`), `start()` which builds the audio graph (master, sfx/amb/music/voice/folk buses, reverb sends, rooms, ducking), noise and impulse-response generators, the `set` helper for smooth parameter changes |
+| `core.js` | `P`, shared state (`ctx`, buses, `loops`), `start()` which builds the audio graph (including a `MediaStreamAudioDestinationNode` tapped after the compressor, for video recording; master, sfx/amb/music/voice/folk buses, reverb sends, rooms, ducking), noise and impulse-response generators, the `set` helper for smooth parameter changes |
 | `voices.js` | Envelope and tone helpers (`env`, `tone`, `syllable`, `panner`, `noiseHit`), bells, keyed pitches, speech timbres per trade, and the `voices` table of named one-shot sounds |
 | `ambience.js` | `scheduled()`: sounds that happen on their own timers (birds, crickets, frogs, woodpecker, owls, drips, wind gusts, train, mill and wheel, children, tavern, enclosed streets, church) plus `chirp` and `cricket` |
 | `music.js` | The generative music engine: scales, the music's own seeded randomness, harmony (chord transitions), the pulse (step sequencer), energy, `musicTick`/`musicStep` |
 | `melody.js` | Melody: motifs, phrase composition and variation (`compose`, `phrase`, `vary`, `wander`) and the instruments (`musicBox`, `piano`, `drone`, `pad`, `bass`, `keys`) |
 | `folk.js` | The evening gathering: the jig (`jigTick`), `fiddle`, `choir` (formant-synthesised vowels) |
 | `events.js` | The music of events: `cueTick` and the fire, wedding (with finale), christening and closing-time cues, `pluck`, `strings` |
-| `update.js` | `update(params, events)`: smooth the parameters into the mix each frame, parse the event string, call `scheduled()`; user controls (`M`, `B`, `F`, resume on first gesture); and `window.meepleAudio = { update, P, voices, onFrame, state }` |
+| `update.js` | `update(params, events)`: smooth the parameters into the mix each frame, parse the event string, call `scheduled()`; user controls (`M`, `B`, `F`, resume on first gesture); and `window.meepleAudio = { update, P, voices, onFrame, state, captureStream }` |
+
+`captureStream()` returns that tap's `MediaStream` (null before audio starts) for `meepleUi.record()`.
 
 `onFrame` is a hook that `favicon.js` sets to receive each frame's params. `state()`
 reports `{ muted, music }` for the touch menu.

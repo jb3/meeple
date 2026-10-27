@@ -152,4 +152,4 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
-window.meepleAudio = { update, P, voices: Object.keys(voices), onFrame: null, state: () => ({ muted, music: musicOn }) };
+window.meepleAudio = { update, P, voices: Object.keys(voices), onFrame: null, state: () => ({ muted, music: musicOn }), captureStream: () => capture?.stream ?? null };

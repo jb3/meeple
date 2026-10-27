@@ -139,5 +139,8 @@ turns individual effects off whatever the tier says (see [Usage](usage.md)).
 - TV browsers start at tier 1 when the quality is `auto`.
 - Photo mode (`O`) stops time and uses a tilt-shift blur; `Enter` saves a PNG via
   `meepleUi.snap()` (`web/menu.js`) right after drawing a frame so the canvas
-  still holds it.
+  still holds it. `X` records video: `meepleUi.record()` runs a `MediaRecorder`
+  on `canvas.captureStream(60)` and adds the audio engine's `captureStream()`
+  track (a `MediaStreamAudioDestinationNode` tapped after the compressor), then
+  downloads the file when it stops. See [Recording video](usage.md#recording-video).
 - `gl.rs` has thin helpers for programs, buffers and uploads.

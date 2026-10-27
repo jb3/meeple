@@ -42,6 +42,10 @@ extern "C" {
     fn audio_update(params: &[f32], events: &str) -> Result<(), JsValue>;
     #[wasm_bindgen(js_namespace = meepleUi, js_name = snap, catch)]
     fn save_picture() -> Result<(), JsValue>;
+    #[wasm_bindgen(js_namespace = meepleUi, js_name = record, catch)]
+    fn toggle_recording() -> Result<bool, JsValue>;
+    #[wasm_bindgen(js_namespace = meepleUi, js_name = recording, catch)]
+    fn is_recording() -> Result<bool, JsValue>;
 }
 
 /// Places hand-picked as good starting worlds (by the seed hunt in the tests).

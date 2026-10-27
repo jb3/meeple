@@ -31,6 +31,7 @@ const P = {
 };
 
 let ctx = null;
+let capture;
 let master, sfx, amb, music, verb, voice, folk, hush, verbLP, verbGain, tavernBus, cueBus;
 // the two rooms the sends can ring in, the ducking gain over the music, the train's distance filter
 let room, roomG, hall, hallG, duckG, trainBus;
@@ -78,6 +79,9 @@ function start() {
   hush.Q.value = 0.5;
   stereo(hush);
   master.connect(hush).connect(comp).connect(ctx.destination);
+  // a second tap on the finished mix, for recording video with sound
+  capture = ctx.createMediaStreamDestination();
+  comp.connect(capture);
 
   // the room: livelier among buildings and by the church, deadened by woods and snow
   verbLP = ctx.createBiquadFilter();

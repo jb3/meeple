@@ -118,7 +118,8 @@ messages that run as sparks along the wires; weir water with foam and mist.
   arcs, makes occasional long journeys, and holds still for captioned postcards.
 - Manual pan, zoom, rotate; click a villager or a train to follow.
 - See-through buildings and trees so the people being watched are never hidden.
-- Photograph mode with a tilt-shift look and PNG saving; shareable links to an exact
+- Photograph mode with a tilt-shift look and PNG saving; **video recording** with
+  sound (`X`); shareable links to an exact
   spot and moment; a map; time-lapse; world of the day and a hand-picked gallery.
 - Touch support: pan, pinch-zoom, tap, on-screen menu.
 - Returning to a world resumes its clock.

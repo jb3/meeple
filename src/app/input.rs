@@ -78,6 +78,11 @@ impl App {
             }
             "o" | "O" => self.toggle_photo(),
             "Enter" if self.photo => self.snap = true,
+            "x" | "X" => match toggle_recording() {
+                Ok(true) => self.toast("Recording: X stops and saves the video"),
+                Ok(false) => self.toast("Video saved, or this browser can't record"),
+                Err(_) => {}
+            },
             "k" | "K" => self.look_preset(),
             "v" | "V" => {
                 let d = js_sys::Date::new_0();
