@@ -212,6 +212,7 @@ impl App {
                         Biome::Desert => [222.0, 202.0, 145.0],
                         Biome::Tundra => [215.0, 222.0, 228.0],
                         Biome::Mountain => [145.0, 140.0, 132.0],
+                        Biome::Jungle => [40.0, 112.0, 52.0],
                     };
                     let lift = 0.82 + ((h - SEA as f32) / 30.0).clamp(0.0, 1.0) * 0.3;
                     [base[0] * lift, base[1] * lift, base[2] * lift]
@@ -310,6 +311,7 @@ impl App {
                         Biome::Desert => "Dunes",
                         Biome::Tundra => "Frozen moors",
                         Biome::Mountain => "Highlands",
+                        Biome::Jungle => "Jungle",
                     }
                 };
                 (name.to_string(), false)
@@ -348,6 +350,7 @@ impl App {
                         Biome::Desert => "Dunes",
                         Biome::Tundra => "Frozen moors",
                         Biome::Mountain => "Highlands",
+                        Biome::Jungle => "Jungle",
                     }
                     .to_string()
                 }

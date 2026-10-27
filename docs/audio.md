@@ -36,7 +36,7 @@ Sounds below volume 0.02 are dropped. Also computed per frame:
 | `ZOOM` | Camera zoom (close in = small) |
 | `MILL`, `SAIL`, `MILL_PAN` | Nearest windmill, its sail angle, and its stereo position |
 | `WHEEL` | Nearest waterwheel |
-| `BIOME` | 0 plains, 1 desert, 2 cold or high, 3 forest (picks the musical scale) |
+| `BIOME` | 0 plains, 1 desert, 2 cold or high, 3 forest or jungle (picks the musical scale) |
 | `CUE`, `CUE_LEVEL` | An event nearby with its own music (1 fire, 2 wedding, 3 christening, 4 closing time) and how near |
 | `TAVERN`, `CHILDREN`, `ENCLOSED`, `CHURCH` | The inn, children at play, how enclosed the streets are, the church close by |
 | `TIER` | The renderer's quality tier, so the mix can skip what it cannot afford |

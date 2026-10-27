@@ -135,7 +135,7 @@ impl App {
         }
         rails.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
         out.extend(rails.into_iter().take(6).map(|r| r.1));
-        // wild country of the rarer sorts: dunes, frozen moors, high mountains
+        // wild country of the rarer sorts: dunes, frozen moors, jungle, high mountains
         for k in 0..16 {
             let a = k as f32 * std::f32::consts::TAU / 16.0;
             let p = here + Vec2::new(a.cos(), a.sin()) * (330.0 + 40.0 * (k % 3) as f32 * 3.0);
@@ -144,6 +144,7 @@ impl App {
                 Biome::Desert if h > SEA as f32 => "Out across the dunes",
                 Biome::Tundra if h > SEA as f32 => "Crossing the frozen moors",
                 Biome::Mountain => "Up in the high mountains",
+                Biome::Jungle if h > SEA as f32 => "Deep in the jungle",
                 _ => continue,
             };
             out.push(Cand { pos: p, id: hash2(0xb10e, (p.x / 160.0).floor() as i32, (p.y / 160.0).floor() as i32), kind: "biome", weight: 1.3, why: why.into(), wait: None, promise: None });

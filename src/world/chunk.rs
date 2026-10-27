@@ -259,6 +259,17 @@ pub fn generate(gen: &Gen, cx: i32, cz: i32) -> Chunk {
                         AIR
                     }
                 }
+                (GRASS, Biome::Jungle) => {
+                    if r < 0.16 {
+                        TALLGRASS
+                    } else if r < 0.23 {
+                        BUSH
+                    } else if r < 0.255 {
+                        [FLOWER_R, FLOWER_Y, FLOWER_B][(r * 1000.0) as usize % 3]
+                    } else {
+                        AIR
+                    }
+                }
                 (SAND, Biome::Desert) | (SNOW, _) | (STONE, _) if r < 0.006 => ROCK,
                 _ => AIR,
             };
@@ -302,6 +313,7 @@ pub fn generate(gen: &Gen, cx: i32, cz: i32) -> Chunk {
                 Biome::Plains => 0.05 + clearing.max(0.0) * 0.3,
                 Biome::Desert => 0.05,
                 Biome::Tundra => 0.35,
+                Biome::Jungle => 0.9 - clearing.max(0.0) * 1.1,
                 Biome::Mountain => {
                     if col.h < SEA + 30 {
                         0.15
@@ -326,6 +338,10 @@ pub fn generate(gen: &Gen, cx: i32, cz: i32) -> Chunk {
                         6..=7 => birch_top(kind),
                         _ => pine_top(kind),
                     },
+                    Biome::Jungle => match kind % 10 {
+                        0..=6 => kapok_top(kind),
+                        _ => palm_top(kind),
+                    },
                     _ => oak_top(kind),
                 };
                 ch.feat.treetops.push([tx as f32 + 0.5, y as f32 + top, tz as f32 + 0.5, y as f32 + bare]);
@@ -339,6 +355,10 @@ pub fn generate(gen: &Gen, cx: i32, cz: i32) -> Chunk {
                     _ => pine(&mut ch, tx, y, tz, kind),
                 },
                 Biome::Plains => oak(&mut ch, tx, y, tz, kind),
+                Biome::Jungle => match kind % 10 {
+                    0..=6 => kapok(&mut ch, tx, y, tz, kind),
+                    _ => palm(&mut ch, tx, y, tz, kind),
+                },
             }
         }
     }

@@ -8,8 +8,9 @@ the page with the details.
 **Terrain and climate** ([details](world-generation.md))
 - Rolling continents, hills and detail noise, mountains from ridged noise, stepped
   terraces, meandering river valleys cut below sea level, lakes and sea.
-- Five biomes: plains, forest, desert (dunes, cacti, palms at oases), tundra (frozen
-  moors, wolves, aurora), mountain (snow-capped, ski resorts, geysers).
+- Six biomes: plains, forest, desert (dunes, cacti, palms at oases), tundra (frozen
+  moors, wolves, aurora), mountain (snow-capped, ski resorts, geysers), and jungle
+  (towering kapoks, palms, thick undergrowth).
 - Cold climates have log-cabin towns and snow earlier; peaks are snowy from late
   autumn to early spring.
 
@@ -20,8 +21,10 @@ the page with the details.
 - Building kinds: house, apartment block, tavern/inn, bakery, smithy (with anvil and
   forge), shop with awning, church, farm (with fields and crops), garden, school,
   library.
-- Four regional styles: Lowland (timber and plaster), Highland (stone and slate),
-  Coastal (whitewash and blue roofs), Northern (log cabins).
+- Six regional styles: Lowland (timber and plaster), Highland (stone and slate),
+  Coastal (whitewash and blue roofs), Northern (log cabins), Mediterranean
+  (whitewash, ochre and terracotta roofs in the warm south) and Tropical (plank
+  houses under green roofs in the jungle).
 - Names for towns and people from `names.rs`.
 - Houses are built over the first seventy days (plot, scaffolding, frame, done), a
   few are abandoned later and fall to ruin with ivy.

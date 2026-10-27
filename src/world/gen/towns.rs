@@ -39,6 +39,10 @@ pub enum Style {
     Coastal,
     /// Log cabins in the cold north.
     Northern,
+    /// Whitewash, ochre and terracotta roofs in the warm south.
+    Mediterranean,
+    /// Plank houses under green roofs in the jungle.
+    Tropical,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -336,10 +340,15 @@ impl Gen {
             let rr = radius as f32 + 18.0;
             self.raw_height(cx as f32 + a.cos() * rr, cz as f32 + a.sin() * rr) < SEA as f32
         });
+        let (warmth, _) = self.biome_noise(cx as f32, cz as f32);
         let style = if self.coldness(cx as f32, cz as f32) > 0.35 {
             Style::Northern
+        } else if self.biome(cx as f32, cz as f32, raw) == Biome::Jungle {
+            Style::Tropical
         } else if level > SEA + 9 {
             Style::Highland
+        } else if warmth > 0.22 {
+            Style::Mediterranean
         } else if shore || wet > 0 {
             Style::Coastal
         } else {

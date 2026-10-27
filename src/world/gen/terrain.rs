@@ -175,6 +175,8 @@ impl Gen {
         let m = mn;
         if t > 0.17 && m < 0.05 {
             Biome::Desert
+        } else if t > 0.1 && m > 0.1 {
+            Biome::Jungle
         } else if t < -0.2 {
             Biome::Tundra
         } else if m > 0.1 {

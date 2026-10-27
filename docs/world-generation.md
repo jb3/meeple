@@ -74,12 +74,23 @@ hot path vectorised.
 
 ### Biomes
 
-`Biome` is `Plains | Forest | Desert | Tundra | Mountain`. Two slow noise
+`Biome` is `Plains | Forest | Desert | Tundra | Mountain | Jungle`. Two slow noise
 fields, warmth (1100-unit) and wetness (800-unit), pick it:
 
 - height above `SEA + 20` → `Mountain`;
 - adjusted warmth `t = warmth - (h - SEA)/90`; `t > 0.17` and dry → `Desert`;
-  `t < -0.2` → `Tundra`; wet (> 0.1) → `Forest`; otherwise `Plains`.
+  hot and wet (`t > 0.1`, wetness > 0.1) → `Jungle`; `t < -0.2` → `Tundra`;
+  wet (> 0.1) → `Forest`; otherwise `Plains`. Jungle is the rarest lowland
+  biome (about 3% of dry land), and only ever claims warm, wet ground that
+  would otherwise have been forest or plains.
+
+**Jungle** (`chunk.rs`, `chunk/trees.rs`): trees are dense (probability
+`0.9 - clearing·1.1`) and are 70% **kapoks** (7–10 high with buttress roots and
+a wide flat crown) and 30% **palms** (5–7 high, four fronds). Both register
+treetops for the owls. The ground is lush with tall grass, bushes and the odd
+flower. The HUD calls it "Jungle", the autopilot visits it ("Deep in the
+jungle") and the music uses the forest scale. Jungle isn't pasture, and orchards
+and chalk figures (plains and forest only) are not found there.
 
 `coldness(x, z)` (0 warm … 1 frozen) is derived from the same warmth field and
 drives northern building style, wolves, aurora, snow cover, and weather.
@@ -110,9 +121,10 @@ ground).
   railway are dropped.
 - A quarter of towns are **cities** (radius 38–51); the rest are villages (radius
   24–35).
-- **Style** comes from where the town sits: `Northern` (cold), `Highland`
-  (mountain/high), `Coastal` (near water), else `Lowland`. Style picks walls,
-  roofs and so on.
+- **Style** comes from where the town sits, tried in this order: `Northern`
+  (cold), `Tropical` (the centre is in a jungle), `Highland` (mountain/high),
+  `Mediterranean` (very warm, `warmth > 0.22`), `Coastal` (near water), else
+  `Lowland`. Style picks walls, roofs and so on.
 - **Names** come from `src/names.rs`.
 - **Greens**: `green(t)` finds a level, open spot just outside the town (eight
   directions tried) for fairs, cricket and skating; `green_clear` keeps trees and
@@ -146,7 +158,10 @@ distance from the centre, and the **kind** is assigned by order and chance:
 
 Walls and roofs depend on kind and style (taverns are plank, or log in the
 north; churches and libraries are stone; highland houses are rubble or
-cobble under slate; coastal houses are plaster under blue roofs; and so on).
+cobble under slate; coastal houses are plaster under blue roofs; Mediterranean
+houses are whitewash, ochre or pink plaster under terracotta (`ROOF_RED`) and
+brown roofs; tropical houses are plank, log or ochre plaster under green and
+brown roofs; and so on).
 Each lot has a facing (towards the centre), a door, a front spot and a street
 spot. Floors: apartments 3–5, taverns/libraries/manors 2, city houses 1–2, a
 quarter of village houses 2.

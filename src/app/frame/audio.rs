@@ -124,7 +124,7 @@ impl App {
                 Biome::Plains => 0.0,
                 Biome::Desert => 1.0,
                 Biome::Tundra | Biome::Mountain => 2.0,
-                Biome::Forest => 3.0,
+                Biome::Forest | Biome::Jungle => 3.0,
             }
         };
         // a wedding, christening, closing time or fire close by gets its own music

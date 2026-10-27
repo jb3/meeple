@@ -86,3 +86,57 @@ pub(super) fn cactus(ch: &mut Chunk, x: i32, y: i32, z: i32, k: u32) {
         ch.set(x, y + i, z, CACTUS);
     }
 }
+
+/// A rainforest giant: a tall straight trunk under a wide, flat crown.
+pub(super) fn kapok_top(k: u32) -> (f32, f32) {
+    let th = 7 + (k % 4) as i32;
+    (th as f32 + 2.0, th as f32 + 1.0)
+}
+
+pub(super) fn kapok(ch: &mut Chunk, x: i32, y: i32, z: i32, k: u32) {
+    let th = 7 + (k % 4) as i32;
+    for i in 0..th {
+        ch.set(x, y + i, z, LOG);
+    }
+    // buttress roots
+    for (dx, dz) in [(1, 0), (-1, 0), (0, 1), (0, -1)] {
+        if (k >> (dx + dz + 4)) & 1 == 1 {
+            ch.set_air(x + dx, y, z + dz, LOG);
+        }
+    }
+    let r = 3 + ((k >> 3) % 2) as i32;
+    let cy = y + th;
+    for dy in 0..=1 {
+        let rr = if dy == 1 { r - 1 } else { r };
+        for dz in -rr..=rr {
+            for dx in -rr..=rr {
+                let j = unit(hash3(k, dx, dy, dz)) * 1.8;
+                if (dx * dx + dz * dz) as f32 <= (rr * rr) as f32 + 0.5 - j {
+                    ch.set_air(x + dx, cy + dy, z + dz, LEAVES);
+                }
+            }
+        }
+    }
+}
+
+pub(super) fn palm_top(k: u32) -> (f32, f32) {
+    let th = 5 + (k % 3) as i32;
+    (th as f32 + 1.0, th as f32 + 1.0)
+}
+
+/// A slim palm with four drooping fronds.
+pub(super) fn palm(ch: &mut Chunk, x: i32, y: i32, z: i32, k: u32) {
+    let th = 5 + (k % 3) as i32;
+    for i in 0..th {
+        ch.set(x, y + i, z, LOG);
+    }
+    let top = y + th;
+    for (dx, dz) in [(1, 0), (-1, 0), (0, 1), (0, -1)] {
+        for l in 1..=3 {
+            ch.set_air(x + dx * l, top - (l == 3) as i32, z + dz * l, LEAVES);
+        }
+    }
+    ch.set_air(x, top, z, LEAVES);
+    ch.set_air(x + 1, top, z + 1, LEAVES);
+    ch.set_air(x - 1, top, z - 1, LEAVES);
+}

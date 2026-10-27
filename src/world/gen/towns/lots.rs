@@ -89,6 +89,8 @@ impl Gen {
                 (_, Style::Highland) => pick(&[WALLSTONE, STONEBRICK, WALLSTONE, COBBLE], h2),
                 (_, Style::Coastal) => pick(&[PLASTER, PLASTER, PLASTER, PLASTER_Y], h2),
                 (_, Style::Northern) => pick(&[LOG, LOG, PLANK], h2),
+                (_, Style::Mediterranean) => pick(&[PLASTER, PLASTER, PLASTER_Y, PLASTER, PLASTER_P], h2),
+                (_, Style::Tropical) => pick(&[PLANK, PLANK, LOG, PLASTER_Y], h2),
                 _ if t.city => pick(&[BRICK, PLASTER, PLASTER_Y, PLASTER_P, STONEBRICK], h2),
                 _ => pick(&[PLASTER, PLANK, PLASTER_Y, PLASTER, BRICK, PLASTER_P], h2),
             };
@@ -96,6 +98,8 @@ impl Gen {
                 Style::Highland => pick(&[ROOF_SLATE, ROOF_SLATE, ROOF_BROWN], h2 >> 8),
                 Style::Coastal => pick(&[ROOF_BLUE, ROOF_BLUE, ROOF_SLATE, ROOF_RED], h2 >> 8),
                 Style::Northern => pick(&[ROOF_BROWN, ROOF_GREEN, ROOF_SLATE], h2 >> 8),
+                Style::Mediterranean => pick(&[ROOF_RED, ROOF_RED, ROOF_RED, ROOF_BROWN], h2 >> 8),
+                Style::Tropical => pick(&[ROOF_GREEN, ROOF_GREEN, ROOF_BROWN], h2 >> 8),
                 Style::Lowland => pick(&[ROOF_RED, ROOF_BLUE, ROOF_BROWN, ROOF_GREEN, ROOF_SLATE, ROOF_RED], h2 >> 8),
             };
             let floors = match kind {

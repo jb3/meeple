@@ -64,6 +64,8 @@ pub enum Biome {
     Desert,
     Tundra,
     Mountain,
+    /// Hot and wet: tall broadleaf trees, palms and thick undergrowth.
+    Jungle,
 }
 
 /// Railways pass at least this far from a town's centre, clear of its plaza.
@@ -209,4 +211,37 @@ impl Gen {
 
     // ---------- lots ----------
 
+}
+
+#[cfg(test)]
+mod biome_tests {
+    use super::*;
+
+    #[test]
+    fn jungles_and_warm_styles_turn_up() {
+        let (mut jungle, mut med, mut tropical) = (0, 0, 0);
+        for seed in 1..=12u32 {
+            let gen = Gen::new(seed);
+            for k in 0..900 {
+                let (x, z) = ((k % 30 - 15) as f32 * 120.0, (k / 30 - 15) as f32 * 120.0);
+                let h = gen.raw_height(x, z);
+                if h > SEA as f32 && gen.biome(x, z, h) == Biome::Jungle {
+                    jungle += 1;
+                }
+            }
+            for rx in -6..=6 {
+                for rz in -6..=6 {
+                    if let Some(t) = gen.town(rx, rz) {
+                        match t.style {
+                            Style::Mediterranean => med += 1,
+                            Style::Tropical => tropical += 1,
+                            _ => {}
+                        }
+                    }
+                }
+            }
+        }
+        println!("jungle samples {jungle}, mediterranean towns {med}, tropical towns {tropical}");
+        assert!(jungle > 50 && med > 0 && tropical > 0);
+    }
 }
