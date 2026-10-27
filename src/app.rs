@@ -421,7 +421,7 @@ impl App {
                 yaw_goal: std::f32::consts::FRAC_PI_4,
                 yaw_t: 12.0,
                 zoom_target: 20.0,
-                auto: true,
+                auto: opts.auto,
                 manual_t: 0.0,
                 heading: Vec2::new(a.cos(), a.sin()),
                 visited,
@@ -576,6 +576,8 @@ pub struct Opts {
     pub prof: bool,
     /// `?aurora` (or `?aurora=0.5`): northern lights at that strength whatever the weather and place.
     pub aurora: Option<f32>,
+    /// Whether the autopilot starts on.
+    pub auto: bool,
     /// `?pitch=0.3`: start looking this far down (lower sees more sky; the autopilot takes over again from there).
     pub pitch: Option<f32>,
 }

@@ -65,6 +65,7 @@ fn opts() -> Opts {
         prof: get("prof").is_some(),
         pitch: get("pitch").and_then(|s| s.parse::<f32>().ok()).map(|p| p.clamp(0.15, 1.2)),
         aurora: get("aurora").map(|s| s.parse().unwrap_or(1.0f32).clamp(0.0, 1.0)),
+        auto: !matches!(get("auto").as_deref(), Some("0" | "off" | "false" | "no")),
         resume: get("hour").is_none() && get("season").is_none(),
     }
 }

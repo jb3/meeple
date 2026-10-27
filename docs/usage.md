@@ -74,6 +74,7 @@ All are optional query parameters (`main.rs`: `opts()`):
 | `yaw=…&zoom=…` | The exact view (zoom clamped 8–130) (written by `L`) |
 | `pitch=0.3` | Start looking this far down (0.15–1.2); the autopilot takes over from there |
 | `aurora` or `aurora=0.5` | Northern lights at that strength regardless of weather and place |
+| `auto=0` | Start with the autopilot off (also `off`, `false`, `no`), so the camera stays where `x` and `z` put it; `Space` turns it on |
 | `prof` | Log where each frame's CPU time goes, every five seconds |
 | `bench` | Time the terrain noise one point at a time against four at a time (and a whole chunk) in this browser |
 | `bella` | An easter egg: a man called Bella lifts weights in front of a mirror in every town square |
