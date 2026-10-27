@@ -6,6 +6,8 @@ about their day while the camera drifts between them. Written in Rust, compiled
 to WebAssembly and rendered with WebGL2; the soundscape is synthesised live
 with WebAudio.
 
+**[Try it in your browser: meeple.jb3.dev](https://meeple.jb3.dev)**
+
 > [!WARNING]
 > This entire project is vibe-coded. No guarantees are made about its
 > efficiency, correctness or security, or that it is free of bugs. Use it at
