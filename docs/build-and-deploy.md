@@ -53,6 +53,7 @@ the stylesheet, builds the Rust crate (`data-trunk rel="rust"`), and loads the s
 | `web/audio/*.js` | The WebAudio engine (see [Audio](audio.md)); copied as the `audio/` directory |
 | `web/menu.js` | Defines `window.meepleUi.snap()` (saves the canvas as a PNG) and the touch menu |
 | `web/favicon.js` | Draws a favicon of a meeple dressed for the in-game season on a darker sky at night, hanging off the audio engine's per-frame hook (`meepleAudio.onFrame`) |
+| `web/splash.js` | The pixel-art splash screen (see [Splash screen](usage.md#splash-screen)) |
 | `web/wakelock.js` | Keeps the screen awake while the world is on show, re-acquiring the lock on return to the tab |
 | `web/update.js` | Polls `version.txt` every minute; swaps in the new wasm in place if only the wasm changed, otherwise reloads (or prompts if the viewer is fullscreen or has sound on, then restores fullscreen after the reload) |
 | `web/style.css` | All styling: HUD, help, card, overlays, menu, postcards, quality badge |

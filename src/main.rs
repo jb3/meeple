@@ -315,6 +315,7 @@ fn main() {
     let tick: Rc<RefCell<Option<Closure<dyn FnMut(f64)>>>> = Rc::new(RefCell::new(None));
     let tick2 = tick.clone();
     let mut last: Option<f64> = None;
+    let mut ready = false;
     let win = window.clone();
     *tick2.borrow_mut() = Some(Closure::new(move |t: f64| {
         if generation() != gen {
@@ -333,6 +334,11 @@ fn main() {
         let dt = last.map(|l| (t - l) / 1000.0).unwrap_or(1.0 / 60.0) as f32;
         last = Some(t);
         app.borrow_mut().frame(dt, &now);
+        if last.is_some() && !ready {
+            ready = true;
+            // lets the splash screen go
+            let _ = js_sys::Reflect::set(&win, &"__meepleReady".into(), &true.into());
+        }
         let _ = win.request_animation_frame(tick.borrow().as_ref().unwrap().as_ref().unchecked_ref());
     }));
     let _ = window.request_animation_frame(tick2.borrow().as_ref().unwrap().as_ref().unchecked_ref());

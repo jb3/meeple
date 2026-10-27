@@ -75,6 +75,20 @@ three days (`MAX_AWAY_DAYS`) for the time away, with a welcome line. This is ski
 if `hour`, `season` or `t` is given. Nothing else is stored; the server is static and
 sees nothing.
 
+## Splash screen
+
+A pixel-art title card ("Meeple", a red meeple, and "by Joe" with a smiley) covers
+the page from first paint, while the wasm downloads and the world is built.
+`web/splash.js` draws it on a tiny 40×36 canvas from bitmap glyphs defined in the
+file, and CSS scales it up with `image-rendering: pixelated`. The letters drop in
+one by one and the meeple hops once.
+
+It stays for at least 2.4 s, then fades out (0.9 s) once the app has drawn its
+first frame. `main.rs` signals that by setting `window.__meepleReady` after the
+first `frame()`. Clicking the splash skips the minimum hold once the app is ready;
+after 20 s it leaves regardless, so a failed start never hides the page forever.
+Its styles (`#splash`) are in `web/style.css`.
+
 ## HUD and overlays
 
 - **HUD** (top): the town the camera is in or the lie of the land, time and
