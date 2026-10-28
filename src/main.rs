@@ -109,11 +109,13 @@ fn touch_points(e: &TouchEvent) -> Vec<(f64, f64)> {
     (0..l.length()).filter_map(|i| l.get(i)).map(|t| (t.client_x() as f64, t.client_y() as f64)).collect()
 }
 
-/// Where a touch gesture was last frame: the fingers' midpoint and spread.
+/// Where a touch gesture was last frame: the fingers' midpoint, spread and
+/// the angle of the line between them (screen coordinates, so clockwise is up).
 #[derive(Clone, Copy)]
 struct Gesture {
     mid: (f64, f64),
     spread: f64,
+    angle: f64,
     fingers: usize,
 }
 
@@ -125,7 +127,8 @@ impl Gesture {
         let n = p.len() as f64;
         let mid = (p.iter().map(|q| q.0).sum::<f64>() / n, p.iter().map(|q| q.1).sum::<f64>() / n);
         let spread = if p.len() > 1 { ((p[0].0 - p[1].0).powi(2) + (p[0].1 - p[1].1).powi(2)).sqrt() } else { 0.0 };
-        Some(Gesture { mid, spread, fingers: p.len() })
+        let angle = if p.len() > 1 { (p[1].1 - p[0].1).atan2(p[1].0 - p[0].0) } else { 0.0 };
+        Some(Gesture { mid, spread, angle, fingers: p.len() })
     }
 }
 
@@ -256,7 +259,7 @@ fn main() {
         });
     }
 
-    // touch: one finger pans, two pan and pinch to zoom, a tap is a click
+    // touch: one finger pans, two pan, pinch to zoom and twist to rotate, a tap is a click
     let gesture: Rc<RefCell<Option<Gesture>>> = Rc::new(RefCell::new(None));
     {
         let (app, gesture) = (app.clone(), gesture.clone());
@@ -282,6 +285,9 @@ fn main() {
                     a.drag(g.mid.0 - was.mid.0, g.mid.1 - was.mid.1);
                     if g.fingers > 1 && was.spread > 1.0 && g.spread > 1.0 {
                         a.input.wheel += ((was.spread / g.spread).ln() / 0.0012) as f32;
+                        // twist: the scene turns with the fingers
+                        let turn = (g.angle - was.angle + std::f64::consts::PI).rem_euclid(std::f64::consts::TAU) - std::f64::consts::PI;
+                        a.twist(turn as f32);
                     }
                 }
             }

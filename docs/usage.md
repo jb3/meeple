@@ -41,7 +41,8 @@ dev profile is slow to load.
 | `?` or `/` | Help |
 | `Esc` | Close overlays, leave photo mode, let go of a followed villager |
 
-**Touch**: one finger pans, two fingers pan and pinch to zoom, a tap is a click.
+**Touch**: one finger pans, two fingers pan, pinch to zoom and twist to rotate (the
+world turns with your fingers), a tap is a click.
 Touch screens get a ☰ menu (`web/menu.js`) whose buttons press the same keys and
 show what each option is currently set to; it appears for four seconds after a
 touch.

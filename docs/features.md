@@ -131,7 +131,7 @@ messages that run as sparks along the wires; weir water with foam and mist.
 - Photograph mode with a tilt-shift look and PNG saving; **video recording** with
   sound (`X`); shareable links to an exact
   spot and moment; a map; time-lapse; world of the day and a hand-picked gallery.
-- Touch support: pan, pinch-zoom, tap, on-screen menu.
+- Touch support: pan, pinch-zoom, twist-to-rotate, tap, on-screen menu.
 - Returning to a world resumes its clock.
 
 ## Rendering ([details](rendering.md))

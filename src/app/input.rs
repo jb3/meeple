@@ -197,6 +197,17 @@ impl App {
         }
     }
 
+    /// Turn the view by `d` radians (two fingers twisting on a touch screen):
+    /// positive is clockwise on screen. The autopilot keeps the new heading.
+    pub fn twist(&mut self, d: f32) {
+        self.cam.yaw += d;
+        self.dir.yaw_goal = self.cam.yaw;
+        self.input.moved_t = 0.0;
+        if self.dir.mode == Mode::FollowTrain {
+            self.dir.yaw_locked = true;
+        }
+    }
+
     /// Mouse drag in CSS pixels.
     pub fn drag(&mut self, dx: f64, dy: f64) {
         let (right, fwd) = self.cam.ground_axes();
